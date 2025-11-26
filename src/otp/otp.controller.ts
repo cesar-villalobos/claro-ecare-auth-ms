@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, BadRequestException } from '@nestjs/common';
 import { OtpService } from './otp.service';
 import { GenerateOtpDto } from './dto/generate-otp.dto';
 import { ValidateOtpDto } from './dto/validate-otp.dto';
@@ -23,7 +23,7 @@ export class OtpController {
   @Get('status')
   async getOtpStatus(@Query('phoneNumber') phoneNumber: string) {
     if (!phoneNumber) {
-      return { error: 'Phone number is required' };
+      throw new BadRequestException('Phone number is required');
     }
     return await this.otpService.getOtpStatus(phoneNumber);
   }

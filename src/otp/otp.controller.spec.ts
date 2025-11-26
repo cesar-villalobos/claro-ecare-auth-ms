@@ -83,10 +83,8 @@ describe('OtpController', () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it('should return error if phone number is not provided', async () => {
-      const result = await controller.getOtpStatus('');
-
-      expect(result).toEqual({ error: 'Phone number is required' });
+    it('should throw BadRequestException if phone number is not provided', async () => {
+      await expect(controller.getOtpStatus('')).rejects.toThrow('Phone number is required');
       expect(service.getOtpStatus).not.toHaveBeenCalled();
     });
   });

@@ -160,7 +160,6 @@ describe('OtpService', () => {
   describe('getOtpStatus', () => {
     it('should return OTP status when OTP exists', async () => {
       const phoneNumber = '+56912345678';
-      mockRedisService.exists.mockResolvedValue(1);
       mockRedisService.ttl.mockResolvedValue(250);
 
       const result = await service.getOtpStatus(phoneNumber);
@@ -171,7 +170,7 @@ describe('OtpService', () => {
 
     it('should return exists false when OTP does not exist', async () => {
       const phoneNumber = '+56912345678';
-      mockRedisService.exists.mockResolvedValue(0);
+      mockRedisService.ttl.mockResolvedValue(-2); // -2 means key doesn't exist
 
       const result = await service.getOtpStatus(phoneNumber);
 

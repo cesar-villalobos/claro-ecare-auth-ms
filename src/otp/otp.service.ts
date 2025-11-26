@@ -30,6 +30,8 @@ export class OtpService {
   /**
    * Normalizes a Chilean phone number to a consistent format
    * Removes all non-digit characters and ensures it starts with country code
+   * Note: Input validation is handled by IsChileanPhoneNumber validator
+   * before this method is called, so we can assume the format is valid
    */
   private normalizePhoneNumber(phoneNumber: string): string {
     // Remove all non-digit characters except leading +
@@ -42,6 +44,7 @@ export class OtpService {
     
     // If it starts with 56 (Chile country code), keep it
     // If it starts with 9 (local mobile format), add 56
+    // The validator ensures that 56 is followed by 9, so no additional check needed
     if (cleaned.startsWith('9')) {
       cleaned = '56' + cleaned;
     }
@@ -149,12 +152,14 @@ export class OtpService {
     const normalizedPhone = this.normalizePhoneNumber(phoneNumber);
     const otpKey = `${this.OTP_PREFIX}${normalizedPhone}`;
 
-    const exists = await this.redisService.exists(otpKey);
-    if (!exists) {
+    const remainingSeconds = await this.redisService.ttl(otpKey);
+    
+    // TTL returns -2 if key doesn't exist, -1 if key exists but has no expiration
+    if (remainingSeconds === -2) {
       return { exists: false };
     }
-
-    const remainingSeconds = await this.redisService.ttl(otpKey);
+    
+    // If key exists but has no expiration or is about to expire
     return {
       exists: true,
       remainingSeconds: remainingSeconds > 0 ? remainingSeconds : 0,
