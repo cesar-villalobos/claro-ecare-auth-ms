@@ -1,0 +1,73 @@
+### Generate OTP - Chilean format with country code
+POST http://localhost:3000/otp/generate
+Content-Type: application/json
+
+{
+  "phoneNumber": "+56912345678"
+}
+
+###
+
+### Generate OTP - Chilean format without plus
+POST http://localhost:3000/otp/generate
+Content-Type: application/json
+
+{
+  "phoneNumber": "56912345678"
+}
+
+###
+
+### Generate OTP - Chilean local format
+POST http://localhost:3000/otp/generate
+Content-Type: application/json
+
+{
+  "phoneNumber": "912345678"
+}
+
+###
+
+### Generate OTP - With spaces
+POST http://localhost:3000/otp/generate
+Content-Type: application/json
+
+{
+  "phoneNumber": "+56 9 1234 5678"
+}
+
+###
+
+### Validate OTP
+POST http://localhost:3000/otp/validate
+Content-Type: application/json
+
+{
+  "phoneNumber": "+56912345678",
+  "otp": "123456"
+}
+
+###
+
+### Check OTP Status
+GET http://localhost:3000/otp/status?phoneNumber=+56912345678
+
+###
+
+### Invalid phone number (should fail)
+POST http://localhost:3000/otp/generate
+Content-Type: application/json
+
+{
+  "phoneNumber": "+1234567890"
+}
+
+###
+
+### Invalid phone number - not starting with 9 (should fail)
+POST http://localhost:3000/otp/generate
+Content-Type: application/json
+
+{
+  "phoneNumber": "+56812345678"
+}
